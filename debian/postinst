@@ -23,6 +23,9 @@ case "$1" in
             chown -R $PACKAGE:adm /var/log/$PACKAGE
         fi
 
+        # Install web application as service
+        update-rc.d -f $PACKAGE defaults
+
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)
