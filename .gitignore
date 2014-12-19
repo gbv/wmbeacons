@@ -1,0 +1,4 @@
+*.xml.bz2
+local/
+*.gz
+beacon/
