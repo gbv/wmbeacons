@@ -16,9 +16,14 @@ use Pod::Usage;
 
 use Data::Beacon qw(0.2.6);
 use Business::ISBN;
-use Data::Dumper;
+
+# load config file
+use YAML qw(LoadFile);
+my ($configfile) = grep { -e $_ } qw(etc/wmbeacons.yaml /etc/wmbeacons/wmbeacons.yaml);
+my $config = $configfile ? LoadFile($configfile) : { };
 
 my ($language, $help, $man, $directory, $infile, $namespaces);
+
 GetOptions(
     'language=s'   => \$language,
     'help|?'       => \$help,
@@ -30,7 +35,7 @@ pod2usage(-verbose => 2) if $man;
 
 $infile = shift @ARGV if @ARGV;
 
-$directory = "beacon";
+$directory = $config->{beacons} || "beacon";
 mkdir $directory unless -d $directory;
 
 if ( $infile and $infile =~ /^[a-z]+(-[a-z]+)?$/ ) {

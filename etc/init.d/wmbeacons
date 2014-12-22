@@ -12,10 +12,11 @@
 
 PACKAGE=wmbeacons
 PIDFILE=/var/run/$PACKAGE.pid
+CARTON=/usr/local/bin/carton
 
 start () {
-    [ -x carton ] || exit 5
-    cd /etc/$PACKAGE
+    [ -x $CARTON ] || exit 5
+    cd /srv/$PACKAGE
     echo -n "Starting $0: "
     carton exec starman --pid $PIDFILE \
         --workers 5 --port 6019 --user wmbeacons --group wmbeacons \

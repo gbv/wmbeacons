@@ -16,6 +16,11 @@ use Getopt::Long;
 use Pod::Usage;
 use LWP::Simple qw(mirror getstore is_success);
 
+# load config file
+use YAML qw(LoadFile);
+my ($configfile) = grep { -e $_ } qw(etc/wmbeacons.yaml /etc/wmbeacons/wmbeacons.yaml);
+my $config = $configfile ? LoadFile($configfile) : { };
+
 my ($man, $help, $download, $directory, $debug);
 
 # parse command line options
