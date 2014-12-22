@@ -22,7 +22,7 @@ start () {
         --workers 5 --port 6019 --user wmbeacons --group wmbeacons \
         --error-log /var/log/$PACKAGE/error.log \
         --access-log /var/log/$PACKAGE/access.log
-        bin/app.psgi        # 2>&1 > /dev/null
+        /srv/wmbeacons/bin/app.psgi        # 2>&1 > /dev/null
     retval=$?
     if [ $retval -eq 0 ]; then
         echo "done"

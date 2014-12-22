@@ -14,4 +14,5 @@ manual-install:
 	cp debian/wmbeacons.cron.weekly /etc/cron.weekly/wmbeacons
 	cp etc/init.d/wmbeacons /etc/init.d
 	cp etc/wmbeacons.yaml /etc/wmbeacons
+	cp etc/index.html     /etc/wmbeacons
 	debian/postinst configure
