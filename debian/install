@@ -1,4 +1,6 @@
 dewiki.namespaces   srv/wmbeacons
+cpanfile            srv/wmbeacons
 cpanfile.snapshot   srv/wmbeacons
 bin/*               srv/wmbeacons/bin
 local/*             srv/wmbeacons/local
+etc/*               etc/wmbeacons

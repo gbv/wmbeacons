@@ -1,24 +1,37 @@
-# Manual usage
+# wmbeacons
 
-Install required dependencies into `./local`:
+* cronjob to regularly downloand, parse, and transform Wikmedia dumps
+* web interface to browse and download BEACON dumps
+* requires Ubuntu >= 14.10, Debian sid (unstable), jessie (testing) or
+  wheezy (stable).
+
+## Local execution
+
+Install required dependencies into `./local`
 
     $ carton
 
-Run download and transformation (this will take a while):
+Run download and transformation (this will take a while)
 
     $ carton exec bin/wpextract de dewiki.templates.gz
     $ carton exec bin/wpbeacons de
 
-This execution can best be triggered by a cronjob, see
-`debian/wmbeacons.cron.weekly`.
+When installed, the transformation is triggered by a cronjob (see
+`debian/wmbeacons.cron.weekly`).
 
-# Installation
+## Packaging and installation
 
-The repository is prepared for Debian packaging with git-dpm, but things may
-not work automatically yet. In theory, a package can be build this way:
+The repository is prepared for Debian packaging with. Version number and
+changelog are not included from git yet.  An unsigned "binary" package can be
+created this way (`make debian-package`)
 
-    $ git-dpm prepare && dpkg-buildpackage -rfakeroot -us -uc
+    $ dpkg-buildpackage -b -us -uc -rfakeroot
 
-In practice you still have to manually run what `dpkg install` whould do
-with `sudo make manual-install` (see `Makefile`) for details.
+The package can then be installed with
+
+    $ dpkg --install wmbeacons_...deb
+
+Dependencies must be installed before, see 
+
+    $ dpkg -I wmbeacons_...deb
 

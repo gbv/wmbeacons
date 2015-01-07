@@ -2,3 +2,14 @@
 local/
 *.gz
 beacon/
+
+debian/files
+debian/wmbeacons.debhelper.log
+debian/wmbeacons.postinst.debhelper
+debian/wmbeacons.postrm.debhelper
+debian/wmbeacons.prerm.debhelper
+debian/wmbeacons.substvars
+debian/wmbeacons/
+
+wmbeacons_*.changes
+wmbeacons_*.deb
