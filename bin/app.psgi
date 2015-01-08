@@ -4,6 +4,8 @@ use v5.10.1;
 use YAML qw(LoadFile);
 my ($configfile) = grep { -e $_ } qw(etc/wmbeacons.yaml /etc/wmbeacons/wmbeacons.yaml);
 my $config = $configfile ? LoadFile($configfile) : { };
+use File::Basename;
+my $configdir = dirname($configfile);
 
 # configure Plack::App::Directory::Template
 $config->{directory} ||= {};
@@ -24,9 +26,12 @@ use Plack::Builder;
 
 builder {
     enable_if { $debug } 'Debug';
-    enable_if { $debug } 'Plack::Middleware::Debug::TemplateToolkit';
-    enable_if { $config->{proxy} }
-        'Plack::Middleware::XForwardedFor', trust => $config->{proxy};
+    enable_if { $debug } 'Debug::TemplateToolkit';
+    enable_if { $config->{proxy} } 'XForwardedFor',
+        trust => $config->{proxy};
     enable 'SimpleLogger';
+    enable 'Plack::Middleware::Static', 
+        path => qr{\.(png|js|css)$}, 
+        root => $configdir;
     $app;
 }

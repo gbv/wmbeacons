@@ -1,0 +1,95 @@
+#!/usr/bin/env perl
+
+use v5.10.1;
+use strict;
+use warnings;
+
+=head1 NAME
+
+database - import BEACON link dumps to database file
+
+=cut
+
+our $VERSION = 0.01;
+
+use DBI qw(:sql_types);
+use Data::Beacon;
+
+# load config file
+use YAML qw(LoadFile);
+my ($configfile) = grep { -e $_ } qw(etc/wmbeacons.yaml /etc/wmbeacons/wmbeacons.yaml);
+my $config = $configfile ? LoadFile($configfile) : { };
+
+# create a new SQLite3 database
+my $dbfile    = "beacons.sqlite3";
+my $newdbfile = "tmp.sqlite3";
+unlink $newdbfile;
+
+my $dbh = DBI->connect("dbi:SQLite:dbname=$newdbfile","","",
+    { 
+        RaiseError => 1,
+        AutoCommit => 0
+    }
+);
+$dbh->do("PRAGMA synchronous = OFF");
+
+$dbh->do(<<"SQL");
+CREATE TABLE beacons (
+    beacon INTEGER,
+    key    TEXT, 
+    value  TEXT
+)
+SQL
+$dbh->do(<<"SQL");
+CREATE TABLE links (
+    beacon     INTEGER,
+    source     TEXT,
+    target     TEXT,
+    annotation TEXT
+)
+SQL
+$dbh->commit;
+
+my $insert_meta = $dbh->prepare("INSERT INTO beacons VALUES (?,?,?)");
+my $insert_link = $dbh->prepare("INSERT INTO links VALUES (?,?,?,?)");
+
+# insert all BEACON files
+my $beacon_id = 1;
+my $beacon_dir = $config->{beacons} || "beacon";
+foreach my $file (<$beacon_dir/*.txt>) {
+    my ($meta_count, $link_count) = (0,0);
+
+    $insert_meta->bind_param(1, $beacon_id, SQL_INTEGER);
+    $insert_link->bind_param(1, $beacon_id, SQL_INTEGER);
+
+    my $beacon = beacon($file);
+    my %meta = $beacon->meta;
+
+    while (my ($key, $value) = each %meta) {
+        $insert_meta->bind_param(2, $key);
+        $insert_meta->bind_param(3, $value);
+        $insert_meta->execute;
+        $meta_count++;
+    }
+
+    if ( $beacon->errors ) {
+        print STDERR $beacon->lasterror . "\n";
+    }
+    
+    while ( $beacon->nextlink ) {
+        my @link = $beacon->link;
+        $insert_link->bind_param($_+2, $link[$_]) for 0..2;
+        $insert_link->execute;
+        $link_count++;
+    }
+
+    $dbh->commit;
+
+    say "$file ($meta_count meta, $link_count links)";
+    $beacon_id++;
+}
+
+say "$newdbfile => $dbfile";
+rename $newdbfile, $dbfile;
+# TODO: move/link new database file to new database file
+
