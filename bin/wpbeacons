@@ -155,9 +155,6 @@ my %beacons = (
             #($value.'-XX',$title);#undef;
         },
     },
-    gbooks => {
-        PREFIX => 'http://books.google.de/books?id=',
-    },
     viaf => {
         PREFIX => 'http://viaf.org/viaf/',
     },

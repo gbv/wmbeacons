@@ -8,3 +8,4 @@ requires 'YAML';
 requires 'Plack::App::Directory::Template';
 requires 'Plack::Middleware::Debug::TemplateToolkit';
 requires 'Plack::Middleware::XForwardedFor';
+requires 'Plack::App::SeeAlso';

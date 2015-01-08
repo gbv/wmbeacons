@@ -2,8 +2,7 @@
 
 * cronjob to regularly downloand, parse, and transform Wikmedia dumps
 * web interface to browse and download BEACON dumps
-* requires Ubuntu >= 14.10, Debian sid (unstable), jessie (testing) or
-  wheezy (stable).
+* tested on Ubuntu >= 14.04
 
 ## Local execution
 

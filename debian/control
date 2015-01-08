@@ -7,5 +7,5 @@ Standards-Version: 3.9.2
  
 Package: wmbeacons
 Architecture: any
-Depends: perl-modules (>= 5.10.1), libyaml-perl, carton, starman
+Depends: perl-modules (>= 5.10.1), cpanminus, libyaml-perl, starman
 Description: wmbeacons is extracts BEACON link dumps from Wikimedia projects

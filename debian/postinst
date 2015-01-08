@@ -3,11 +3,20 @@
 set -e
 
 PACKAGE=wmbeacons
+CARTON=/usr/local/bin/carton
 
 case "$1" in
     configure)
 
-        # Create user if it doesn`t exist.
+        # install carton, unless available
+        if [ ! -e "$CARTON" ] ; then
+            cpanm Carton
+        fi
+
+        # Create group if not existing
+        getent group $PACKAGE || groupadd $PACKAGE
+
+        # Create user if not existing
         if ! id $PACKAGE > /dev/null 2>&1 ; then
             adduser --system --home /srv/$PACKAGE --no-create-home \
                 --ingroup $PACKAGE --disabled-password --shell /bin/bash \
