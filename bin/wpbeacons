@@ -246,7 +246,7 @@ sub init_config {
             TIMESTAMP => ($timestamp || time),
             map { $_ => $config->{$_} } grep { $_ =~ /^[A-Z]+$/ } keys %$config,
         );
-        my $file = $language.'wiki-'.$name.'.beacon';
+        my $file = $language.'wiki-'.$name.'.txt';
         $config->{file} = $file;
         $file = "$directory/$file";
         if ( open my $fh, ">", $file ) {
