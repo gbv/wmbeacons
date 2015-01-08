@@ -23,6 +23,13 @@ my $app = Plack::App::Directory::Template->new(
 my $debug = ($ENV{PLACK_ENV} // '') =~ /^(development|debug)$/;
 
 use Plack::Builder;
+use Plack::App::SeeAlso;
+my $seealso = Plack::App::SeeAlso->new(
+    Query => sub {
+        my $id = shift;
+        return [ $id, [], [], [] ]; # TODO
+    }
+);
 
 builder {
     enable_if { $debug } 'Debug';
@@ -30,15 +37,26 @@ builder {
     enable_if { $config->{proxy} } 'XForwardedFor',
         trust => $config->{proxy};
     enable 'SimpleLogger';
-    enable 'Plack::Middleware::Static', 
-        path => qr{\.(png|js|css)$}, 
-        root => $configdir;
-    $app;
+    builder {
+        mount '/beacon' => builder {
+            enable 'Plack::Middleware::Static', 
+                path => qr{\.(png|js|css)$}, 
+                root => $configdir;
+            $app;
+        };
+        mount '/seealso' => $seealso;
+        mount '/' => sub { 
+            [300,[],\*DATA]
+        };
+    }
 }
 
-__END__
 # TODO: SeeAlso link server
 #my $dbh = DBI->connect("dbi:SQLite:$dbfile", undef, undef, {
 #            sqlite_open_flags => DBD::SQLite::OPEN_READONLY,
 #              });
 
+__DATA__
+<html>
+see <a href="beacon/">beacon</a> or <a href="seealso/">seealso</a>!
+</html>
