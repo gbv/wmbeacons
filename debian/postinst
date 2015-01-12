@@ -1,5 +1,4 @@
 #!/bin/sh
-
 set -e
 
 PACKAGE=wmbeacons
@@ -42,6 +41,8 @@ case "$1" in
         # Install web application as service
         update-rc.d -f $PACKAGE defaults
 
+        # (re)start service
+        service $PACKAGE restart
     ;;
 
     abort-upgrade|abort-remove|abort-deconfigure)

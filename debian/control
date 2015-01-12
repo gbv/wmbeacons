@@ -2,10 +2,11 @@ Source: wmbeacons
 Section: misc
 Priority: extra
 Maintainer: Jakob Voss <jakob.voss@gbv.de>
-Build-Depends: debhelper (>= 9), carton
+Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.2
  
 Package: wmbeacons
 Architecture: any
-Depends: perl-modules (>= 5.10.1), cpanminus, libyaml-perl, starman
+Depends: perl-modules (>= 5.10.1), cpanminus, starman, libyaml-perl, libtemplate-perl
+Recommends: carton
 Description: wmbeacons is extracts BEACON link dumps from Wikimedia projects

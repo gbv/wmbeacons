@@ -1,0 +1,25 @@
+language: perl
+perl:
+    - 5.14
+
+before_install:
+    # debian package tools
+    - sudo apt-get install fakeroot dpkg-dev
+    # dependencies
+    - sudo apt-get install perl-modules cpanminus libyaml-perl starman libtemplate-perl
+install:
+    # unless Carton is available as package
+    - sudo cpanm Carton
+    - carton install --deployment
+
+script:
+    - make debian-package
+    - sudo dpkg -i wmbeacons_*.deb
+    - sudo service wmbeacons status
+    - sudo apt-get install curl
+    - curl -I http://127.0.0.1:6019
+    - carton exec prove --verbose 
+
+# speed up travis build
+cache:
+    - apt

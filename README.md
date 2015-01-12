@@ -1,8 +1,20 @@
 # wmbeacons
 
-* cronjob to regularly downloand, parse, and transform Wikmedia dumps
-* web interface to browse and download BEACON dumps
-* tested on Ubuntu >= 14.04
+**wmbeacos** is an application to regularly download, parse and transform dumps
+of Wikimedia wikis to create and provide BEACON link dumps. The application
+consists of a cronjob and a web application. 
+
+The application is packaged as Debian package and installs at the following
+locations:
+
+  /srv/wmbeacons/       - application files
+  /etc/wmbeacons/       - configuration
+  /var/log/wmbeacons/   - log files
+  /etc/init.d/wmbeacons - init script
+
+The application has been tested on Ubuntu >= 14.04.
+
+[![Build Status](https://travis-ci.org/gbv/wmbeacons.svg)](https://travis-ci.org/gbv/wmbeacons)
 
 ## Local execution
 
@@ -33,4 +45,6 @@ The package can then be installed with
 Dependencies must be installed before, see 
 
     $ dpkg -I wmbeacons_...deb
+
+See `.traviy.yml` for detailed steps.
 

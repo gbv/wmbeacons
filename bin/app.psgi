@@ -1,4 +1,4 @@
-use v5.10.1;
+use v5.14.1;
 
 # load config file
 use YAML qw(LoadFile);
@@ -12,6 +12,11 @@ $config->{directory} ||= {};
 my ($templates) = grep { -e "$_/index.html" } qw(etc /etc/wmbeacons);
 $config->{directory}->{templates} = $templates if $templates;
 $config->{directory}->{root} ||= $config->{beacons} || 'beacon';
+
+for (grep { ! -d $_ } $config->{directory}->{root}) {
+    mkdir $_;
+    say STDERR "$_ not found" unless -d $_;
+}
 
 # TODO: include more config variables
 use Plack::App::Directory::Template;
