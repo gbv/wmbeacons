@@ -113,10 +113,6 @@ my %beacons = (
     doi => {
         PREFIX  => 'http://dx.doi.org/',
     },
-    pnd => {
-        PREFIX => 'http://d-nb.info/gnd/',
-        handler => \&gnd_handler,
-    },
     swd => {
         PREFIX => 'http://d-nb.info/gnd/',
         handler => \&gnd_handler,
@@ -165,6 +161,9 @@ my %beacons = (
     selibr => {
         PREFIX => 'http://libris.kb.se/auth/',
     },
+    ndl => {
+        PREFIX => 'http://id.ndl.go.jp/auth/ndlna/',
+    }
 );
 
 my %mappings = (
@@ -176,12 +175,13 @@ my %mappings = (
     'Google Buch' => { BuchID => 'gbooks' },
     ISSN => { 1 => 'issn' },
     Normdaten => {
-        PND => 'pnd',
-        SWD => 'swd',
-        VIAF => 'viaf',
-        SELIBR => 'selibr',
+        GND  => 'gnd',
         LCCN => 'lccn',
-        GKD => 'gkd', # 'GKD-V1' => 'gkd', 'GKD-V2' => 'gkd',
+        GKD => 'gkd', # deprecated
+        SWD => 'swd', # deprecated
+        NDL  => 'ndl',
+        SELIBR => 'selibr',
+        VIAF => 'viaf',
     }
 );
 
