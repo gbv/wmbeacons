@@ -1,7 +1,5 @@
 #!/usr/bin/perl
-
-use strict;
-use warnings;
+use v5.14.1;
 
 =head1 NAME
 
@@ -23,6 +21,8 @@ my ($configfile) = grep { -e $_ } qw(etc/wmbeacons.yaml /etc/wmbeacons/wmbeacons
 my $config = $configfile ? LoadFile($configfile) : { };
 
 my ($language, $help, $man, $directory, $infile, $namespaces);
+
+my $server = $config->{server} || 'http://ws.gbv.de/beacon/';
 
 GetOptions(
     'language=s'   => \$language,
@@ -241,12 +241,13 @@ sub init_config {
     my $language = shift;
 
     while ( my ($name, $config) = each(%beacons) ) {
+        my $file = $language.'wiki-'.$name.'.txt';
         my %metafields = (
             TARGET => "http://$language.wikipedia.org/wiki/",
             TIMESTAMP => ($timestamp || time),
             map { $_ => $config->{$_} } grep { $_ =~ /^[A-Z]+$/ } keys %$config,
+            FEED => $server.$file,
         );
-        my $file = $language.'wiki-'.$name.'.txt';
         $config->{file} = $file;
         $file = "$directory/$file";
         if ( open my $fh, ">", $file ) {
