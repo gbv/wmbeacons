@@ -68,22 +68,6 @@ DISTRIBUTIONS
       base 0
       strict 0
       warnings 0
-  Data-Beacon-0.3.1
-    pathname: V/VO/VOJ/Data-Beacon-0.3.1.tar.gz
-    provides:
-      Data::Beacon 0.003001
-    requirements:
-      Carp 0
-      Exporter 0
-      ExtUtils::MakeMaker 6.30
-      Getopt::Long 0
-      Pod::Usage 0
-      Scalar::Util 0
-      Time::Piece 0
-      URI::Escape 0
-      base 0
-      strict 0
-      warnings 0
   Data-Dump-1.22
     pathname: G/GA/GAAS/Data-Dump-1.22.tar.gz
     provides:

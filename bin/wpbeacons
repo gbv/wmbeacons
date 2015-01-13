@@ -7,12 +7,11 @@ wpbeacons - extract useful links to Wikipedia articles
 
 =cut
 
-our $VERSION = 0.25;
+our $VERSION = 0.26;
 
 use Getopt::Long;
 use Pod::Usage;
-
-use Data::Beacon qw(0.2.6);
+use Time::Piece;
 use Business::ISBN;
 
 # load config file
@@ -105,7 +104,7 @@ sub gnd_handler {
     $sum %= 11;
     return unless ((((11 - $sum) % 11) eq $c) or ((11 - (11 - $sum) % 11) eq $c));
 
-    return ($value, $title);
+    return ($value, '', $title);
 }
 
 # Which links to extract (template => configuration)
@@ -140,14 +139,15 @@ my %beacons = (
                 $value = $value->as_isbn13 unless ref($value) eq 'Business::ISBN13';
                 $value->as_string([]);
             } or return;
-            return ( "$isbn", $title ) 
+            return ( "$isbn", "", $title ) 
         }
     }, 
     isil => {
         PREFIX  => 'http://lobid.org/origanization/',
         handler => sub {
             my ($title, $value) = @_;
-            return ($value =~ /^[A-Z]{1,4}-[A-Za-z0-9\/:]+$/) ? ( $value, $title ) : ();
+            return ($value =~ /^[A-Z]{1,4}-[A-Za-z0-9\/:]+$/)
+                ? ( $value, '', $title ) : ();
             #($value.'-XX',$title);#undef;
         },
     },
@@ -204,64 +204,77 @@ while (<IN>) {
     }
 }
 
-summary();
+# print summary
+while ( my ($name, $beacon) = each %beacons ) {
+    if ($beacon->{fh}) {
+        print "Extracted " . $beacon->{count}
+            . " $name to " . $beacon->{file}
+            . " (" . $beacon->{invalid} . " failed)\n";
+    }
+}
+
 
 sub handle_simple_template {
-    my ($target, $title, $value) = @_;
+    my ($beacon, $title, $value) = @_;
 
-    return unless $target and $target->{beacon};
+    return unless $beacon and $beacon->{fh};
 
     $title =~ s/ /_/g;
 
-    my $handler = $target->{handler};
-    my $link;
+    my $fh = $beacon->{fh};
+    my $handler = $beacon->{handler};
+    my ($source, $target) = $handler
+                          ? $beacon->{handler}->($title, $value)
+                          : ($value, $title);
 
-    if ($handler) {
-        $link = [ $target->{handler}->( $title, $value ) ];
-        return unless @$link;
-    } else {
-        return unless defined $value;
-        $link = [ $value, $title ];
-    }
-
-    $target->{beacon}->appendlink( @$link );
-}
-
-sub summary {
-    while ( my ($name, $beacon) = each(%beacons) ) {
-        if ($beacon->{beacon}) {
-            print "Extracted " . $beacon->{beacon}->count 
-                . " $name to " . $beacon->{file}
-                . " (" . $beacon->{invalid} . " failed)\n";
-        }
+    if (defined $source) {
+        # print BEACON link
+        print $fh $source;
+        say $fh (defined $target and $target ne "" ? "||$target" : "");
+        $beacon->{count}++;
     }
 }
 
 sub init_config {
     my $language = shift;
 
-    while ( my ($name, $config) = each(%beacons) ) {
+    while ( my ($name, $beacon) = each(%beacons) ) {
         my $file = $language.'wiki-'.$name.'.txt';
+
+        $timestamp ||= time;
+        if ($timestamp =~ /^[0-9]+$/) { # seconds since epoch
+            $timestamp = gmtime($timestamp);
+            # Note that this conversion does not trigger an error
+            # or warning, but may be dropped in a future version
+        } else {
+            # ISO 8601 combined date and time in UTC
+            $timestamp =~ s/Z$//;
+            $timestamp = Time::Piece->strptime($timestamp, '%Y-%m-%dT%T' );
+        }
+        $timestamp = $timestamp->datetime().'Z';
+
         my %metafields = (
             TARGET => "http://$language.wikipedia.org/wiki/",
-            TIMESTAMP => ($timestamp || time),
-            map { $_ => $config->{$_} } grep { $_ =~ /^[A-Z]+$/ } keys %$config,
-            FEED => $server.$file,
+            map { $_ => $beacon->{$_} } grep { $_ =~ /^[A-Z]+$/ } keys %$beacon,
         );
-        $config->{file} = $file;
-        $file = "$directory/$file";
-        if ( open my $fh, ">", $file ) {
-            my $beacon = Data::Beacon->new( 
-                \%metafields, links => sub { print $fh join('|',@_[0,1]), "\n" }
-            );
-            print $fh $beacon->metafields;
-            print $fh "\n";
-            $config->{beacon} = $beacon;
-            $config->{invalid} = 0;
 
-            print "Extracting to $file\n";
+        $beacon->{file}  = $file;
+        $beacon->{count} = 0;
+        $beacon->{invalid} = 0;
+
+        if ( open my $fh, ">", "$directory/$file" ) {
+            $beacon->{fh} = $fh;
+
+            # print BEACON meta fields
+            say $fh "#FORMAT: BEACON";
+            say $fh "#$_: ".$metafields{$_} for sort keys %metafields;
+            say $fh "#TIMESTAMP: $timestamp";
+            say $fh "#FEED: $server$file" if $server;
+            say $fh "";
+
+            say "Extracting to $directory/$file";
         } else {
-            print STDERR "Failed to open $file\n";
+            say STDERR "Failed to open $directory/$file";
         }
     }
 }
