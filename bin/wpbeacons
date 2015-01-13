@@ -34,7 +34,7 @@ pod2usage(-verbose => 2) if $man;
 
 $infile = shift @ARGV if @ARGV;
 
-$directory = $config->{beacons} || "beacon";
+$directory = "beacon";
 mkdir $directory unless -d $directory;
 
 if ( $infile and $infile =~ /^[a-z]+(-[a-z]+)?$/ ) {

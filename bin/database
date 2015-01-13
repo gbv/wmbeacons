@@ -1,8 +1,6 @@
 #!/usr/bin/env perl
 
-use v5.10.1;
-use strict;
-use warnings;
+use v5.14.1;
 
 =head1 NAME
 
@@ -10,7 +8,7 @@ database - import BEACON link dumps to database file
 
 =cut
 
-our $VERSION = 0.01;
+our $VERSION = '0.02';
 
 use DBI qw(:sql_types);
 use Data::Beacon;
@@ -55,7 +53,7 @@ my $insert_link = $dbh->prepare("INSERT INTO links VALUES (?,?,?,?)");
 
 # insert all BEACON files
 my $beacon_id = 1;
-my $beacon_dir = $config->{beacons} || "beacon";
+my $beacon_dir = "beacon";
 foreach my $file (<$beacon_dir/*.txt>) {
     my ($meta_count, $link_count) = (0,0);
 
