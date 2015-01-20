@@ -1,50 +1,32 @@
-# wmbeacons
+# NAME
 
-**wmbeacos** is an application to regularly download, parse and transform dumps
-of Wikimedia wikis to create and provide BEACON link dumps. The application
-consists of a cronjob and a web application. 
-
-The application is packaged as Debian package and installs at the following
-locations:
-
-  /srv/wmbeacons/       - application files
-  /etc/wmbeacons/       - configuration
-  /var/log/wmbeacons/   - log files
-  /etc/init.d/wmbeacons - init script
-
-The application has been tested on Ubuntu >= 14.04.
+wmbeacons - BEACON file provider 
 
 [![Build Status](https://travis-ci.org/gbv/wmbeacons.svg)](https://travis-ci.org/gbv/wmbeacons)
 
-## Local execution
+# DESCRIPTION
 
-Install required dependencies into `./local`
+**wmbeacons** is an application to regularly download, parse and transform
+dumps of Wikimedia wikis to create and provide BEACON link dumps. The
+application consists of a cronjob and a web application. 
 
-    $ carton
+# SYNOPSIS
 
-Run download and transformation (this will take a while)
+The application is automatically started as service, listening on port 6019.
 
-    $ carton exec bin/wpextract de dewiki.templates.gz
-    $ carton exec bin/wpbeacons de
+    sudo service wmbeacons {status|start|stop|restart}
 
-When installed, the transformation is triggered by a cronjob (see
-`debian/wmbeacons.cron.weekly`).
+# INSTALLATION
 
-## Packaging and installation
+The application is packaged as Debian package and installed at
+`/srv/wmbeacons/`. Log files are located at `/var/log/wmbeacons/`.
 
-The repository is prepared for Debian packaging with. Version number and
-changelog are not included from git yet.  An unsigned "binary" package can be
-created this way (`make debian-package`)
+# CONFIGURATION
 
-    $ dpkg-buildpackage -b -us -uc -rfakeroot
+See `/etc/default/wmbeacons` for basic configuration and `/etc/wmbecons` for
+additional settings. Restart is needed after changes.
 
-The package can then be installed with
+# SEE ALSO
 
-    $ dpkg --install wmbeacons_...deb
-
-Dependencies must be installed before, see 
-
-    $ dpkg -I wmbeacons_...deb
-
-See `.traviy.yml` for detailed steps.
+Source code at <https://github.com/gbv/wmbeacons>
 

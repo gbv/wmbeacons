@@ -1,5 +1,5 @@
-info:
-	@echo see README.md
+debian/wmbeacons.1: README.md
+	grep -v '^\[!' $< | pandoc -s -t man -M title="WMBEACONS(1) Manual" -o $@
 
 # create single entry from last tag
 changelog:
