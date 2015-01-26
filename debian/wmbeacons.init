@@ -44,7 +44,7 @@ stop () {
         retval=$?
         [ $retval -eq 0 ] && rm -f $PIDFILE
         echo "done"
-        exit
+        return
     echo
         exit $retval
     fi
@@ -75,8 +75,8 @@ case "$1" in
         $1
     ;;
     restart)
-        start
         stop
+        start
     ;;
     *)
         echo "Usage: $0 {start|stop|restart|status}" >&2

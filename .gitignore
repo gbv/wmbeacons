@@ -1,15 +1,15 @@
 *.xml.bz2
-local/
 *.gz
 beacon/
 
-debian/files
-debian/wmbeacons.debhelper.log
-debian/wmbeacons.postinst.debhelper
-debian/wmbeacons.postrm.debhelper
-debian/wmbeacons.prerm.debhelper
-debian/wmbeacons.substvars
-debian/wmbeacons/
+# carton
+local/
 
-wmbeacons_*.changes
-wmbeacons_*.deb
+# debian
+debian/files
+debian/*.debhelper.log
+debian/*.debhelper
+debian/*.substvars
+debian/*/
+*.changes
+*.deb

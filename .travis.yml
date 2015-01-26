@@ -2,16 +2,16 @@ language: perl
 perl:
     - 5.14
 before_install:
+    - export PACKAGE=`perl -nE 'say $1 if /^Package:\s+(.+)/' < debian/control`
+    - export DEPENDS=`perl -nE 'next unless $_ =~ s/^Depends:\s+//; $_ =~ s/[, ]+|\([^)]+\)/ /g; say' < debian/control`
     - sudo apt-get update -qq
-    - sudo apt-get autoremove
-    - sudo apt-get install fakeroot dpkg-dev
-    - sudo apt-get install perl-modules cpanminus libyaml-perl starman libtemplate-perl
+    - sudo apt-get install fakeroot dpkg-dev ${DEPENDS}
 install:
     - sudo cpanm Carton
     - carton install --deployment
 script:
     - make debian-package
-    - sudo dpkg -i wmbeacons_*.deb
-    - sudo service wmbeacons status
+    - sudo dpkg -i ${PACKAGE}_*.deb
+    - sudo service ${PACKAGE} status
     - carton exec prove -Ilib --verbose 
 cache: apt
