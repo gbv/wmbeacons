@@ -50,7 +50,6 @@ stop () {
     fi
     echo "pid $PIDFILE not found"
     echo
-    exit 1
 }
 
 status () {
@@ -62,17 +61,16 @@ status () {
       exit 0
     else
       echo "$0 is not running, but pidfile $PIDFILE exists"
-      exit 1
     fi
   else
     echo "$0 is not running"
-    exit 1
   fi
 }
 
 case "$1" in
     start|stop|status)
         $1
+        exit 1
     ;;
     restart)
         stop

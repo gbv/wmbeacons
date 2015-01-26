@@ -2,8 +2,8 @@ language: perl
 perl:
     - 5.14
 before_install:
-    - export PACKAGE=`perl -nE 'say $1 if /^Package:\s+(.+)/' < debian/control`
     - export DEPENDS=`perl -nE 'next unless $_ =~ s/^Depends:\s+//; $_ =~ s/[, ]+|\([^)]+\)/ /g; say' < debian/control`
+    - export PACKAGE=`perl -nE 'say $1 if /^Package:\s+(.+)/' < debian/control`
     - sudo apt-get update -qq
     - sudo apt-get install fakeroot dpkg-dev ${DEPENDS}
 install:
