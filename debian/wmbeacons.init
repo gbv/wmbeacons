@@ -16,7 +16,7 @@ PIDFILE=/srv/$PACKAGE/$PACKAGE.pid
 [ -f /etc/default/$PACKAGE ] && . /etc/default/$PACKAGE
 
 start () {
-    echo -n "Starting $0: "
+    echo -n "Starting $0 on port $PORT: "
     if [ -z "$PORT" -o -z "$WORKERS" ]; then
         echo "missing configuration PORT and/or WORKERS"
         exit 5
@@ -57,7 +57,7 @@ status () {
     kill -0 `cat $PIDFILE` &> /dev/null
     retval=$?
     if [ $retval -eq 0 ]; then
-      echo "$0 is running"
+      echo "$0 is running on port $PORT"
       exit 0
     else
       echo "$0 is not running, but pidfile $PIDFILE exists"
